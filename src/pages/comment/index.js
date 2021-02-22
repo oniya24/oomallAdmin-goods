@@ -27,7 +27,6 @@ const userManage_comment = ({
   putComfirmComment,
   savePagination,
 }) => {
-  console.log(commentState);
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
@@ -40,12 +39,12 @@ const userManage_comment = ({
     });
   };
   useEffect(() => {
-    // getAllComments({
-    //   state: commentState,
-    //   page: commentPage,
-    //   pagesize: commentPageSize
-    // })
-    console.log('fetch new ');
+    getAllComments({
+      id: depart_id,
+      state: commentState,
+      page: commentPage,
+      pageSize: commentPageSize,
+    });
   }, [commentState, commentPage, commentPageSize]);
   const columns = useMemo(() => {
     return [

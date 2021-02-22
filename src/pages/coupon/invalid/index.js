@@ -83,11 +83,11 @@ const coupon_invalid = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllInvalidCouponActivity({
-    //   shopId: depart_id,
-    //   page: invalidCouponPage,
-    //   pageSize: invalidCouponPageSize
-    // });
+    getAllInvalidCouponActivity({
+      shopId: depart_id,
+      page: invalidCouponPage,
+      pageSize: invalidCouponPageSize,
+    });
     console.log('fetch new');
   }, [invalidCouponPage, invalidCouponPageSize]);
   return (

@@ -6,10 +6,13 @@ export default defineConfig({
   },
   proxy: {
     '/api': {
-      target: 'http://localhost:8081/goods/',
+      target: 'http://localhost:8081/',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },
+  },
+  devServer: {
+    port: 8002,
   },
   qiankun: {
     slave: {},

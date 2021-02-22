@@ -24,6 +24,7 @@ const coupon_valid = ({
   deleteCouponActivityById,
   saveValidPagination,
 }) => {
+  console.log(validCouponPage, validCouponPageSize);
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
@@ -122,11 +123,12 @@ const coupon_valid = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllValidCouponActivity({
-    //   shopId: depart_id,
-    //   page: validCouponPage,
-    //   pageSize: validCouponPageSize
-    // });
+    getAllValidCouponActivity({
+      id: depart_id,
+      page: validCouponPage,
+      pageSize: validCouponPageSize,
+      timeline: 0,
+    });
     console.log('fetch new');
   }, [validCouponPage, validCouponPageSize]);
   return (

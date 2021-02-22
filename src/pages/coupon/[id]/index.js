@@ -34,14 +34,14 @@ const coupon_detail = ({
     sessionStorage.getItem('adminInfo'),
   );
   useEffect(() => {
-    // getCouponActivitySkusById({
-    //   shopId: depart_id,
-    //   id
-    // })
-    // getCouponActivityById({
-    //   shopId: depart_id,
-    //   id
-    // })
+    getCouponActivitySkusById({
+      shopId: depart_id,
+      id,
+    });
+    getCouponActivityById({
+      shopId: depart_id,
+      id,
+    });
   }, []);
   const handleAddSku2Coupon = () => {
     // postModifyActivityRegion

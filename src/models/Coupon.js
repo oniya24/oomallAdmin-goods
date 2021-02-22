@@ -74,6 +74,7 @@ const model = {
       }
     },
     *getAllValidCouponActivity({ payload }, { call, put }) {
+      console.log('payload', payload);
       const res = yield call(getAllValidCouponActivityReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('查看上线的优惠活动列表');

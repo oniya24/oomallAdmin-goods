@@ -44,17 +44,17 @@ const goods_spu = ({
     setModalState(1);
     setModalVisible(true);
     // 这里对time进行处理
-    // form.setFieldsValue(record)
+    form.setFieldsValue(record);
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then((value) => {
-      // await postAddSpu(value)
+    form.validateFields().then(async (value) => {
+      await postAddSpu(value);
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
-    form.validateFields().then((value) => {
-      // await putModifySpu(value)
+    form.validateFields().then(async (value) => {
+      await putModifySpu(value);
       setModalVisible(false);
     });
   };
@@ -117,11 +117,11 @@ const goods_spu = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllSpu({
-    //   shopId: depart_id,
-    //   page: spuPage,
-    //   pageSize: spuPageSize
-    // });
+    getAllSpu({
+      shopId: depart_id,
+      page: spuPage,
+      pageSize: spuPageSize,
+    });
     console.log('fetch new');
   }, [spuPage, spuPageSize]);
   return (

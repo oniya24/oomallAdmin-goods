@@ -127,12 +127,11 @@ const shopActivity_groupon = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllGroupons({
-    //   shopId: depart_id,
-    //   page: grouponPage,
-    //   pageSize: grouponPageSize
-    // });
-    console.log('fetch new');
+    getAllGroupons({
+      shopId: depart_id,
+      page: grouponPage,
+      pageSize: grouponPageSize,
+    });
   }, [grouponPage, grouponPageSize]);
   return (
     <Card>

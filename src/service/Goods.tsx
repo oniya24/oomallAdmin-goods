@@ -100,8 +100,10 @@ export const deleteBrandReq = ({
 };
 
 // 查看所有品牌
-export const getAllBrandReq = ({ params }: { params: pagination }) => {
-  return request(`/brands`);
+export const getAllBrandReq = ({ ...params }: { params: pagination }) => {
+  return request(`/brands`, {
+    params: params,
+  });
 };
 
 // 管理员新增品牌
@@ -172,13 +174,19 @@ export const deleteCategoryReq = ({
 
 // ？？？ 这里是部分是应该查所有的SPU
 // 查看一条商品SPU的详细信息
-export const getAllSpuReq = ({ id }: { id: number }) => {
-  return request(`/spus/{id}`);
+export const getAllSpuReq = ({ shopId }: { shopId: number }) => {
+  return request(`/spus/${shopId}`);
 };
 
 // 店家新建商品SPU
-export const postAddSpuReq = ({ id, ...data }: { id: number; data: any }) => {
-  return request(`/shops/${id}/spus`, {
+export const postAddSpuReq = ({
+  shopId,
+  ...data
+}: {
+  shopId: number;
+  data: any;
+}) => {
+  return request(`/shops/${shopId}/spus`, {
     method: 'post',
     data: data,
   });

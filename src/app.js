@@ -7,8 +7,10 @@ import { errorHandler } from './utilReq/errorHandler';
 import { BASEURL } from '@/consts/router.js';
 
 export function render(oldRender) {
-  if (!sessionStorage.getItem('adminInfo')) {
-    console.error('没有adminInfo,随便编了一个');
+  if (
+    !process.env.NODE_ENV == 'production' &&
+    !sessionStorage.getItem('adminInfo')
+  ) {
     sessionStorage.setItem(
       'adminInfo',
       JSON.stringify({
@@ -31,7 +33,7 @@ export function render(oldRender) {
 export const request = {
   timeout: 5000,
   mode: 'cors',
-  prefix: process.env.NODE_ENV == 'production' ? BASEURL : '/api',
+  prefix: BASEURL,
   errorHandler,
   errorConfig: {
     adaptor: (resData) => {

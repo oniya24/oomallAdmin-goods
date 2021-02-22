@@ -15,7 +15,7 @@ export const getAllInvalidCouponActivityReq = ({
   });
 };
 // 查看上线的优惠活动列表
-export const getAllValidCouponActivityReq = ({ params }: { params: any }) => {
+export const getAllValidCouponActivityReq = (params: any) => {
   return request(`/couponactivities`, {
     method: 'get',
     params: params,

@@ -117,11 +117,11 @@ const goods_category = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllCategory({
-    //   shopId: depart_id,
-    //   page: categoryPage,
-    //   pageSize: categoryPageSize
-    // });
+    getAllCategory({
+      shopId: depart_id,
+      page: categoryPage,
+      pageSize: categoryPageSize,
+    });
     console.log('fetch new');
   }, [categoryPage, categoryPageSize]);
   return (

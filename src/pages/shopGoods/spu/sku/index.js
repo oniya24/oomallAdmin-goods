@@ -42,17 +42,17 @@ const goods_sku = ({
     setModalState(1);
     setModalVisible(true);
     // 这里对time进行处理
-    // form.setFieldsValue(record)
+    form.setFieldsValue(record);
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then((value) => {
-      // await postAddSku2Spu(value)
+    form.validateFields().then(async (value) => {
+      await postAddSku2Spu(value);
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
-    form.validateFields().then((value) => {
-      // await putModifySku(value)
+    form.validateFields().then(async (value) => {
+      await putModifySku(value);
       setModalVisible(false);
     });
   };
@@ -126,14 +126,14 @@ const goods_sku = ({
       },
     ];
   }, []);
-  // useEffect(() => {
-  //   // getSpuById({
-  //   //   shopId: depart_id,
-  //   //   page: spuPage,
-  //   //   pageSize: spuPageSize
-  //   // });
-  //   console.log("fetch new")
-  // }, [ ]);
+  useEffect(() => {
+    // getSpuById({
+    //   shopId: depart_id,
+    //   page: spuPage,
+    //   pageSize: spuPageSize
+    // });
+    console.log('fetch new');
+  }, []);
   return (
     <Card>
       <div style={{ margin: 10 }}>

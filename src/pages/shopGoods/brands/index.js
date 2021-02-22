@@ -111,11 +111,11 @@ const goods_brand = ({
     ];
   }, []);
   useEffect(() => {
-    // getAllBrand({
-    //   shopId: depart_id,
-    //   page: brandPage,
-    //   pageSize: brandPageSize
-    // });
+    getAllBrand({
+      // shopId: depart_id,
+      page: brandPage,
+      pageSize: brandPageSize,
+    });
     console.log('fetch new');
   }, [brandPage, brandPageSize]);
   return (

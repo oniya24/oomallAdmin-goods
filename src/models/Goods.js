@@ -134,7 +134,7 @@ const model = {
   },
   effects: {
     // brand 部分
-    *getAllBrandReq({ payload }, { call, put }) {
+    *getAllBrand({ payload }, { call, put }) {
       const res = yield call(getAllBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         const { data } = res;
@@ -148,19 +148,19 @@ const model = {
         });
       }
     },
-    *postAddBrandReq({ payload }, { call, put }) {
+    *postAddBrand({ payload }, { call, put }) {
       const res = yield call(getAllBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }
     },
-    *putModifyBrandReq({ payload }, { call, put }) {
+    *putModifyBrand({ payload }, { call, put }) {
       const res = yield call(getAllBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('修改成功');
       }
     },
-    *deleteBrandReq({ payload }, { call, put }) {
+    *deleteBrand({ payload }, { call, put }) {
       const res = yield call(getAllBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('删除成功');
