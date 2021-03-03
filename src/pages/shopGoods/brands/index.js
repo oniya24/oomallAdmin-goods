@@ -10,8 +10,10 @@ import {
   DatePicker,
   Modal,
   Input,
+  Upload,
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Goods';
+import { UploadOutlined } from '@ant-design/icons';
 import pagination from '@/utils/pagination';
 const goods_brand = ({
   brandList,
@@ -22,6 +24,7 @@ const goods_brand = ({
   postAddBrand,
   putModifyBrand,
   deleteBrand,
+  postUploadBrandImg,
   saveBrandPagination,
 }) => {
   const { depart_id, userName, mobile } = JSON.parse(
@@ -29,11 +32,17 @@ const goods_brand = ({
   );
   const [modalState, setModalState] = useState(0); // 0是创建
   const [modalVisible, setModalVisible] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
   const [form] = Form.useForm();
   const handledeleteBrand = async ({ id }) => {
     await deleteBrand({
       shopId: depart_id,
       id,
+    });
+    await getAllBrand({
+      // shopId: depart_id,
+      page: brandPage,
+      pageSize: brandPageSize,
     });
   };
   const handleCreateBrand = () => {
@@ -44,17 +53,67 @@ const goods_brand = ({
     setModalState(1);
     setModalVisible(true);
     // 这里对time进行处理
-    // form.setFieldsValue(record)
+    const { name, ...params } = record;
+    form.setFieldsValue({
+      ...params,
+      brandName: name,
+    });
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then((value) => {
-      // await postAddBrand(value)
+    form.validateFields().then(async (value) => {
+      const { brandName, ...params } = value;
+      await postAddBrand({
+        shopId: depart_id,
+        ...params,
+        name: brandName,
+      });
+      await getAllBrand({
+        // shopId: depart_id,
+        page: brandPage,
+        pageSize: brandPageSize,
+      });
       setModalVisible(false);
     });
   };
+  const beforeUpload = (file) => {
+    console.log(file);
+    // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    // if (!isJpgOrPng) {
+    //   message.error('You can only upload JPG/PNG file!');
+    // }
+    // const isLt2M = file.size / 1024 / 1024 < 5;
+    // if (!isLt2M) {
+    //   message.error('Image must smaller than 5MB!');
+    // }
+    setImageUrl(file);
+    return false;
+  };
+  const handleUploadImg = async (id) => {
+    const formData = new FormData();
+    formData.append('file', imageUrl);
+    await postUploadBrandImg({
+      shopId: depart_id,
+      id: id,
+      formData,
+    });
+  };
+
   const handleSubmitModify = () => {
-    form.validateFields().then((value) => {
-      // await putModifyBrand(value)
+    form.validateFields().then(async (value) => {
+      console.log(value);
+      const { id, brandName, ...params } = value;
+      await putModifyBrand({
+        shopId: depart_id,
+        id,
+        ...params,
+        name: brandName,
+      });
+      await handleUploadImg(id);
+      await getAllBrand({
+        // shopId: depart_id,
+        page: brandPage,
+        pageSize: brandPageSize,
+      });
       setModalVisible(false);
     });
   };
@@ -146,7 +205,7 @@ const goods_brand = ({
           <Form.Item label="id" name="id" hidden></Form.Item>
           <Form.Item
             label="活动名"
-            name="name"
+            name="brandName"
             required
             rules={[{ required: true, message: '请输入名称' }]}
           >
@@ -160,6 +219,18 @@ const goods_brand = ({
           >
             <Input />
           </Form.Item>
+          {Number(modalState) !== 0 ? (
+            <Form.Item label="上传图片">
+              <Upload
+                name="file"
+                id="file"
+                beforeUpload={beforeUpload}
+                multiple={false}
+              >
+                <Button icon={<UploadOutlined />}>选择图片</Button>
+              </Upload>
+            </Form.Item>
+          ) : null}
         </Form>
       </Modal>
     </Card>

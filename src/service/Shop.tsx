@@ -1,6 +1,11 @@
 import { request } from 'umi';
 import { pagination } from '@/const/interface.tsx';
 
+export const getAllShopReq = (params: pagination) => {
+  return request(`/shops`, {
+    params: params,
+  });
+};
 interface shopData {
   name: string;
 }

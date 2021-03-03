@@ -4,8 +4,11 @@ import {
   Card,
   Table,
   Button,
+  Select,
   Tooltip,
   Space,
+  Row,
+  Col,
   Form,
   DatePicker,
   Modal,
@@ -13,6 +16,10 @@ import {
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Groupon';
 import pagination from '@/utils/pagination';
+import { dateFormat } from '@/consts/oomall';
+import moment from 'moment';
+
+const { Option } = Select;
 const shopActivity_groupon = ({
   grouponList,
   grouponTotal,
@@ -29,9 +36,15 @@ const shopActivity_groupon = ({
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
+  const [queryParams, setQueryParams] = useState({
+    beginTime: moment(new Date()).subtract(1, 'M'),
+    endTime: moment(new Date()).add(1, 'M'),
+    state: 0,
+  });
   const [modalState, setModalState] = useState(0); // 0是创建
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [queryForm] = Form.useForm();
   const handledeleteGroupon = async ({ id }) => {
     await deleteGroupon({
       shopId: depart_id,
@@ -45,8 +58,15 @@ const shopActivity_groupon = ({
   const handleModifyGroupon = (record) => {
     setModalState(1);
     setModalVisible(true);
-    // 这里对time进行处理
-    // form.setFieldsValue(record)
+    let { beginTime, endTime } = record;
+    beginTime = moment(beginTime, dateFormat);
+    endTime = moment(endTime, dateFormat);
+    // console.log(record)
+    form.setFieldsValue({
+      ...record,
+      beginTime,
+      endTime,
+    });
   };
   const handleOnShelves = async ({ id }) => {
     await putOnshelvesGroupon({
@@ -61,15 +81,48 @@ const shopActivity_groupon = ({
     });
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then((value) => {
-      // await postCreateGroupon(value)
+    form.validateFields().then(async (value) => {
+      let { beginTime, endTime, spuId } = value;
+      beginTime = beginTime.format(dateFormat);
+      endTime = endTime.format(dateFormat);
+      // spuId在这里选择
+      await postCreateGroupon({
+        shopId: depart_id,
+        spuId,
+        ...value,
+        beginTime,
+        endTime,
+      });
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
-    form.validateFields().then((value) => {
-      // await putModifyGroupon(value)
+    form.validateFields().then(async (value) => {
+      let { beginTime, endTime } = value;
+      beginTime = beginTime.format(dateFormat);
+      endTime = endTime.format(dateFormat);
+      await putModifyGroupon({
+        shopId: depart_id,
+        spuId,
+        ...value,
+        beginTime,
+        endTime,
+      });
       setModalVisible(false);
+    });
+  };
+  const handleQueryFormSubmit = (value) => {
+    console.log(value);
+    let { beginTime, endTime, ...params } = value;
+    beginTime = beginTime.format(dateFormat);
+    endTime = endTime.format(dateFormat);
+    getAllGroupons({
+      shopId: depart_id,
+      ...params,
+      beginTime,
+      endTime,
+      page: grouponPage,
+      pageSize: grouponPageSize,
     });
   };
   const columns = useMemo(() => {
@@ -81,8 +134,8 @@ const shopActivity_groupon = ({
       },
       {
         title: '姓名',
-        dataIndex: 'endTime',
-        key: 'endTime',
+        dataIndex: 'name',
+        key: 'name',
       },
       {
         title: '开始时间',
@@ -127,26 +180,91 @@ const shopActivity_groupon = ({
     ];
   }, []);
   useEffect(() => {
+    let { beginTime, endTime, ...params } = queryParams;
+    beginTime = beginTime.format(dateFormat);
+    endTime = endTime.format(dateFormat);
     getAllGroupons({
       shopId: depart_id,
+      ...params,
+      beginTime,
+      endTime,
       page: grouponPage,
       pageSize: grouponPageSize,
     });
   }, [grouponPage, grouponPageSize]);
   return (
-    <Card>
-      <div style={{ margin: 10 }}>
-        <Button type="primary" onClick={handleCreateGroupon}>
-          创建团购活动
-        </Button>
-      </div>
-      <Table
-        scroll={{ x: true }}
-        pagination={pagination(grouponTotal, saveAdverPagination)}
-        rowKey={(record) => record.dataIndex}
-        columns={columns}
-        dataSource={grouponList}
-      ></Table>
+    <div style={{ height: '100%', width: '100%' }}>
+      <Card>
+        <Form form={queryForm} layout="inline" onFinish={handleQueryFormSubmit}>
+          <Row>
+            <Col span={5}>
+              <Form.Item label="物品" name="spuId">
+                <Select>
+                  <Option value={273}>test1</Option>
+                  <Option value={274}>test2</Option>
+                  <Option value={275}>test3</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item
+                label="状态"
+                name="state"
+                initialValue={queryParams.state}
+              >
+                <Select>
+                  <Option value={0}>已创建</Option>
+                  <Option value={1}>已上架</Option>
+                  <Option value={2}>已下架</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item
+                label="开始时间"
+                name="beginTime"
+                initialValue={queryParams.beginTime}
+                // required
+                // rules={[{ required: true, message: '请输入开始时间' }]}
+              >
+                <DatePicker showTime />
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item
+                label="结束时间"
+                name="endTime"
+                initialValue={queryParams.endTime}
+                // required
+                // rules={[{ required: true, message: '请输入结束时间' }]}
+              >
+                <DatePicker showTime />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  查询活动
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
+      <Card>
+        <div style={{ margin: 5 }}>
+          <Button type="primary" onClick={handleCreateGroupon}>
+            创建团购活动
+          </Button>
+        </div>
+        <Table
+          scroll={{ x: true }}
+          pagination={pagination(grouponTotal, saveAdverPagination)}
+          rowKey={(record) => record.dataIndex}
+          columns={columns}
+          dataSource={grouponList}
+        ></Table>
+      </Card>
       <Modal
         visible={modalVisible}
         destroyOnClose
@@ -157,7 +275,7 @@ const shopActivity_groupon = ({
         }
         onCancel={() => setModalVisible(false)}
       >
-        <Form form={form}>
+        <Form form={form} preserve={false} style={{ width: 250 }}>
           <Form.Item label="id" name="id" hidden></Form.Item>
           <Form.Item
             label="策略"
@@ -166,6 +284,13 @@ const shopActivity_groupon = ({
             rules={[{ required: true, message: '请输入策略' }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item label="物品" name="spuId">
+            <Select>
+              <Option value={273}>test1</Option>
+              <Option value={274}>test2</Option>
+              <Option value={275}>test3</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="开始时间"
@@ -185,7 +310,7 @@ const shopActivity_groupon = ({
           </Form.Item>
         </Form>
       </Modal>
-    </Card>
+    </div>
   );
 };
 

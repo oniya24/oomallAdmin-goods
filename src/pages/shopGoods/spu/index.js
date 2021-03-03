@@ -48,13 +48,25 @@ const goods_spu = ({
   };
   const handleSubmitCreate = () => {
     form.validateFields().then(async (value) => {
-      await postAddSpu(value);
+      await postAddSpu({
+        shopId: depart_id,
+        ...value,
+      });
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
+    console.log('????');
     form.validateFields().then(async (value) => {
-      await putModifySpu(value);
+      await putModifySpu({
+        shopId: depart_id,
+        ...value,
+      });
+      await getAllSpu({
+        shopId: depart_id,
+        page: spuPage,
+        pageSize: spuPageSize,
+      });
       setModalVisible(false);
     });
   };
@@ -71,14 +83,27 @@ const goods_spu = ({
         key: 'name',
       },
       {
-        title: '描述',
-        dataIndex: 'decription',
-        key: 'decription',
+        title: '产品编号',
+        dataIndex: 'goodsSn',
+        key: 'goodsSn',
       },
       {
-        title: '规格',
-        dataIndex: 'specs',
-        key: 'specs',
+        title: '缩略图',
+        dataIndex: 'imageUrl',
+        key: 'imageUrl',
+        render: (text, record) => {
+          return <img src={text} style={{ width: 50, height: 50 }}></img>;
+        },
+      },
+      {
+        title: '分类',
+        dataIndex: ['category', 'name'],
+        key: 'category.name',
+      },
+      {
+        title: '品牌',
+        dataIndex: ['brand', 'name'],
+        key: 'brand.name',
       },
       {
         title: '创建时间',
@@ -98,17 +123,17 @@ const goods_spu = ({
           const { state, id } = record;
           return (
             <Space>
-              <Button type="default" onClick={() => handleModifySpu(record)}>
-                修改活动信息
+              <Button type="primary" onClick={() => handleModifySpu(record)}>
+                修改商品信息
               </Button>
               <Button
                 type="default"
-                onClick={() => history.push(`/goods/spu/${id}`)}
+                onClick={() => history.push(`/shopGoods/spu/${id}`)}
               >
                 查看详情
               </Button>
               <Button type="danger" onClick={() => handledeleteSpu(record)}>
-                删除活动
+                删除商品
               </Button>
             </Space>
           );
@@ -122,7 +147,6 @@ const goods_spu = ({
       page: spuPage,
       pageSize: spuPageSize,
     });
-    console.log('fetch new');
   }, [spuPage, spuPageSize]);
   return (
     <Card>
@@ -148,7 +172,7 @@ const goods_spu = ({
         }
         onCancel={() => setModalVisible(false)}
       >
-        <Form form={form}>
+        <Form form={form} preserve={false}>
           <Form.Item label="id" name="id" hidden></Form.Item>
           <Form.Item
             label="活动名"

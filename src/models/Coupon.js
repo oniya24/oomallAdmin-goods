@@ -67,8 +67,8 @@ const model = {
         yield put({
           type: 'save',
           payload: {
-            validCouponList: list,
-            validCouponTotal: total,
+            inValidCouponList: list,
+            inValidCouponTotal: total,
           },
         });
       }
@@ -76,15 +76,16 @@ const model = {
     *getAllValidCouponActivity({ payload }, { call, put }) {
       console.log('payload', payload);
       const res = yield call(getAllValidCouponActivityReq, payload);
+      console.log('res', res);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
-        message.success('查看上线的优惠活动列表');
+        console.log('?????');
         const { data } = res;
         const { list, total } = data;
         yield put({
           type: 'save',
           payload: {
-            invalidCouponList: list,
-            invalidCouponTotal: total,
+            validCouponList: list,
+            validCouponTotal: total,
           },
         });
       }

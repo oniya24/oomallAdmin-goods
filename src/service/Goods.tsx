@@ -45,27 +45,31 @@ export const deleteSkuFloatPieceReq = ({
 export const postUploadSkuImgReq = ({
   shopId,
   id,
-  img,
+  formData,
 }: {
   shopId: number;
   id: number;
-  img: any;
+  formData: any;
 }) => {
-  return request(`/shops/${shopId}/skus/${id}/uploadImg`);
+  return request(`/shops/${shopId}/skus/${id}/uploadImg`, {
+    method: 'post',
+    data: formData,
+  });
 };
 
 // 上传图片
 export const postUploadBrandImgReq = ({
   shopId,
   id,
-  img,
+  formData,
 }: {
   shopId: number;
   id: number;
-  img: any;
+  formData: any;
 }) => {
   return request(`/shops/${shopId}/brands/${id}/uploadImg`, {
     method: 'post',
+    data: formData,
   });
 };
 
@@ -81,7 +85,7 @@ export const putModifyBrandReq = ({
   data: brandInfo;
 }) => {
   return request(`/shops/${shopId}/brands/${id}`, {
-    method: 'post',
+    method: 'put',
     data: data,
   });
 };
@@ -112,21 +116,29 @@ interface brandInfo {
   detail: string;
 }
 export const postAddBrandReq = ({
-  id,
+  shopId,
   ...data
 }: {
-  id: number;
+  shopId: number;
   data: brandInfo;
 }) => {
-  return request(`/shops/${id}/brands`, {
+  return request(`/shops/${shopId}/brands`, {
     method: 'post',
     data: data,
   });
 };
 
 // 查询商品分类关系
-export const getSubCategoryByIdReq = (id: number) => {
-  return request(`/categories/${id}/subcategories`);
+export const getSubCategoryByIdReq = ({
+  cId,
+  ...params
+}: {
+  cId: number;
+  params: any;
+}) => {
+  return request(`/categories/${cId}/subcategories`, {
+    params: params,
+  });
 };
 // 管理员新增商品类目
 export const postAddSubCategoryReq = ({
@@ -174,8 +186,10 @@ export const deleteCategoryReq = ({
 
 // ？？？ 这里是部分是应该查所有的SPU
 // 查看一条商品SPU的详细信息
-export const getAllSpuReq = ({ shopId }: { shopId: number }) => {
-  return request(`/spus/${shopId}`);
+export const getAllSpuReq = (params: any) => {
+  return request(`/shops/spus`, {
+    params: params,
+  });
 };
 
 // 店家新建商品SPU
@@ -203,7 +217,7 @@ export const putModifySpuReq = ({
   data: any;
 }) => {
   return request(`/shops/${shopId}/spus/${id}`, {
-    method: 'post',
+    method: 'put',
     data: data,
   });
 };
@@ -229,14 +243,14 @@ export const getSpuByIdReq = ({ id }: { id: number }) => {
 // 管理员添加新的SKU到SPU里
 export const postAddSku2SpuReq = ({
   shopId,
-  id,
+  spuId,
   ...data
 }: {
   shopId: number;
-  id: number;
+  spuId: number;
   data: any;
 }) => {
-  return request(`/shops/${shopId}/spus/${id}/skus`, {
+  return request(`/shops/${shopId}/spus/${spuId}/skus`, {
     method: 'post',
     data: data,
   });

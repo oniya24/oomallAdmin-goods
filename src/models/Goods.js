@@ -23,6 +23,8 @@ import {
   postSpu2BrandReq,
   deleteSpuFromCategoryReq,
   postSpu2CategoryReq,
+  postUploadBrandImgReq,
+  postUploadSkuImgReq,
 } from '@/service/Goods.tsx';
 import {
   defaultMapStateToProps,
@@ -49,6 +51,7 @@ const model = {
     brandPage: 1,
     brandPageSize: 10,
     // category部分
+    mainCategory: [],
     categoryList: [
       {
         id: 0,
@@ -149,21 +152,27 @@ const model = {
       }
     },
     *postAddBrand({ payload }, { call, put }) {
-      const res = yield call(getAllBrandReq, payload);
+      const res = yield call(postAddBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }
     },
     *putModifyBrand({ payload }, { call, put }) {
-      const res = yield call(getAllBrandReq, payload);
+      const res = yield call(putModifyBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('修改成功');
       }
     },
     *deleteBrand({ payload }, { call, put }) {
-      const res = yield call(getAllBrandReq, payload);
+      const res = yield call(deleteBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('删除成功');
+      }
+    },
+    *postUploadBrandImg({ payload }, { call, put }) {
+      const res = yield call(postUploadBrandImgReq, payload);
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        message.success('上传成功');
       }
     },
     *saveBrandPagination({ payload }, { call, put }) {
@@ -177,16 +186,29 @@ const model = {
       });
     },
     // category部分
+    *getAllMainCategory({ payload }, { call, put }) {
+      const res = yield call(getSubCategoryByIdReq, { cId: 0 });
+      console.log('cid');
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        const { data } = res;
+        yield put({
+          type: 'save',
+          payload: {
+            mainCategory: data,
+          },
+        });
+      }
+    },
     *getAllCategory({ payload }, { call, put }) {
       const res = yield call(getSubCategoryByIdReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         const { data } = res;
-        const { list, total } = data;
+        // const { list, total } = data;
         yield put({
           type: 'save',
           payload: {
-            brandList: list,
-            brandTotal: total,
+            categoryList: data,
+            categoryTotal: 10,
           },
         });
       }
@@ -197,7 +219,7 @@ const model = {
         message.success('创建成功');
       }
     },
-    *putCategory({ payload }, { call, put }) {
+    *putModifyCategory({ payload }, { call, put }) {
       const res = yield call(putCategoryReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('修改成功');
@@ -220,6 +242,12 @@ const model = {
       });
     },
     // sku部分
+    *postUploadSkuImg({ payload }, { call, put }) {
+      const res = yield call(postUploadSkuImgReq, payload);
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        message.success('上传成功');
+      }
+    },
     *getSpuById({ payload }, { call, put }) {
       const res = yield call(getSpuByIdReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
@@ -234,19 +262,19 @@ const model = {
       }
     },
     *postAddSku2Spu({ payload }, { call, put }) {
-      const res = yield call(getSkuByIdReq, payload);
+      const res = yield call(postAddSku2SpuReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }
     },
     *deleteSku({ payload }, { call, put }) {
-      const res = yield call(getSkuByIdReq, payload);
+      const res = yield call(deleteSkuReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('删除成功');
       }
     },
     *putModifySku({ payload }, { call, put }) {
-      const res = yield call(getSkuByIdReq, payload);
+      const res = yield call(putModifySkuReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('修改成功');
       }
@@ -260,20 +288,20 @@ const model = {
         yield put({
           type: 'save',
           payload: {
-            brandList: list,
-            brandTotal: total,
+            spuList: list,
+            spuTotal: total,
           },
         });
       }
     },
-    *postAddSpuReq({ payload }, { call, put }) {
-      const res = yield call(postAddSubSpuReq, payload);
+    *postAddSpu({ payload }, { call, put }) {
+      const res = yield call(postAddSpuReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }
     },
     *putModifySpu({ payload }, { call, put }) {
-      const res = yield call(putSpuReq, payload);
+      const res = yield call(putModifySpuReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('修改成功');
       }
@@ -295,28 +323,38 @@ const model = {
       });
     },
     // 交叉部分
-    *putOnshelves({ payload }, { call, put }) {},
-    *putOffshelves({ payload }, { call, put }) {},
+    *putOnshelves({ payload }, { call, put }) {
+      const res = yield call(putOnshelvesReq, payload);
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        message.success('上架成功');
+      }
+    },
+    *putOffshelves({ payload }, { call, put }) {
+      const res = yield call(putOffshelvesReq, payload);
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        message.success('下架成功');
+      }
+    },
     *deleteSpuFromBrand({ payload }, { call, put }) {
-      const res = yield call(deleteSpuFromBrandReq, call);
+      const res = yield call(deleteSpuFromBrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('删除成功');
       }
     },
-    *postSpu2BrandReq({ payload }, { call, put }) {
-      const res = yield call(postSpu2BrandReq, call);
+    *postSpu2Brand({ payload }, { call, put }) {
+      const res = yield call(postSpu2BrandReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }
     },
     *deleteSpuFromCategory({ payload }, { call, put }) {
-      const res = yield call(deleteSpuFromCategoryReq, call);
+      const res = yield call(deleteSpuFromCategoryReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('删除成功');
       }
     },
     *postSpu2Category({ payload }, { call, put }) {
-      const res = yield call(postSpu2CategoryReq, call);
+      const res = yield call(postSpu2CategoryReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
         message.success('创建成功');
       }

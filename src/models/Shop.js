@@ -1,4 +1,5 @@
 import {
+  getAllShopReq,
   postApplyShopReq,
   putModifyShopReq,
   deleteShopReq,
@@ -22,31 +23,45 @@ const model = {
     shopPageSize: 10,
   },
   effects: {
-    *postApplyShopReq({ payload }, { call, put }) {
+    *getAllShop({ payload }, { call, put }) {
+      const res = yield call(getAllShopReq, payload);
+      if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
+        const { data } = res;
+        const { list, total } = data;
+        yield put({
+          type: 'save',
+          payload: {
+            shopList: list,
+            shopTotal: total,
+          },
+        });
+      }
+    },
+    *postApplyShop({ payload }, { call, put }) {
       const res = yield call(postApplyShopReq, payload);
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('创建成功');
       }
     },
-    *putModifyShopReq({ payload }, { call, put }) {
+    *putModifyShop({ payload }, { call, put }) {
       const res = yield call(putModifyShopReq, payload);
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('修改成功');
       }
     },
-    *deleteShopReq({ payload }, { call, put }) {
+    *deleteShop({ payload }, { call, put }) {
       const res = yield call(deleteShopReq, payload);
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('删除成功');
       }
     },
-    *putAuditShopReq({ payload }, { call, put }) {
+    *putAuditShop({ payload }, { call, put }) {
       const res = yield call(putAuditShopReq, payload);
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('认证成功');
       }
     },
-    *putOnshelvesReq({ payload }, { call, put }) {
+    *putOnshelves({ payload }, { call, put }) {
       const res = yield call(putOnshelvesReq, payload);
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('上架店铺成功');
@@ -57,6 +72,16 @@ const model = {
       if (isCodeEqualOk(res) || isErrnoEqual0(res)) {
         message.success('下架店铺成功');
       }
+    },
+    *saveShopPagination({ payload }, { call, put }) {
+      const { page, pageSize } = payload;
+      yield put({
+        type: 'save',
+        payload: {
+          shopPage: page,
+          shopPageSize: pageSize,
+        },
+      });
     },
   },
   reducers: {

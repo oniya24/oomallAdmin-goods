@@ -21,14 +21,14 @@ interface SpuData {
 // 管理员对SPU新增团购活动
 export const postCreateGrouponReq = ({
   shopId,
-  id,
+  spuId,
   ...data
 }: {
   shopId: number;
-  id: number;
+  spuId: number;
   data: SpuData;
 }) => {
-  return request(`/shops/${shopId}/spus/${id}/groupons`, {
+  return request(`/shops/${shopId}/spus/${spuId}/groupons`, {
     method: 'post',
     data: data,
   });
@@ -73,7 +73,9 @@ export const putOnshelvesGrouponReq = ({
   shopId: number;
   id: number;
 }) => {
-  return request(`/shops/${shopId}/groupons/${id}/onshelves`);
+  return request(`/shops/${shopId}/groupons/${id}/onshelves`, {
+    method: 'put',
+  });
 };
 
 // 管理员下架预售活动
@@ -84,5 +86,7 @@ export const putOffshelvesGrouponReq = ({
   shopId: number;
   id: number;
 }) => {
-  return request(`/shops/${shopId}/groupons/${id}/offshelves`);
+  return request(`/shops/${shopId}/groupons/${id}/offshelves`, {
+    method: 'put',
+  });
 };

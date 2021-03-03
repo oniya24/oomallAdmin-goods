@@ -3,13 +3,13 @@ import { pagination } from '@/const/interface.tsx';
 
 // 管理员查看，仅可查看己方下线的优惠活动并获取简要信息
 export const getAllInvalidCouponActivityReq = ({
-  id,
+  shopId,
   ...params
 }: {
-  id: number;
+  shopId: number;
   params: pagination;
 }) => {
-  return request(`/shops/${id}/couponactivities/invalid`, {
+  return request(`/shops/${shopId}/couponactivities/invalid`, {
     method: 'get',
     params: params,
   });

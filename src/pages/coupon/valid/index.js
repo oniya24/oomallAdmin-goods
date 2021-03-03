@@ -13,6 +13,8 @@ import {
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Coupon';
 import pagination from '@/utils/pagination';
+import { dateFormat } from '@/consts/oomall';
+import moment from 'moment';
 const coupon_valid = ({
   validCouponList,
   validCouponTotal,
@@ -24,10 +26,10 @@ const coupon_valid = ({
   deleteCouponActivityById,
   saveValidPagination,
 }) => {
-  console.log(validCouponPage, validCouponPageSize);
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
+  console.log(validCouponList);
   const [modalState, setModalState] = useState(0); // 0是创建
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -45,17 +47,52 @@ const coupon_valid = ({
     setModalState(1);
     setModalVisible(true);
     // 这里对time进行处理
-    // form.setFieldsValue(record)
+    let { beginTime, endTime } = record;
+    beginTime = moment(beginTime, dateFormat);
+    endTime = moment(endTime, dateFormat);
+    form.setFieldsValue({
+      ...record,
+      beginTime,
+      endTime,
+    });
   };
   const handleSubmitCreate = () => {
-    form.validateFields().then((value) => {
-      // await postCreateCoupon(value)
+    form.validateFields().then(async (value) => {
+      let { beginTime, endTime } = value;
+      beginTime = beginTime.format(dateFormat);
+      endTime = endTime.format(dateFormat);
+      await postCreateCouponActivity({
+        shopId: depart_id,
+        ...value,
+        beginTime,
+        endTime,
+      });
+      await getAllValidCouponActivity({
+        shopId: depart_id,
+        page: validCouponPage,
+        pageSize: validCouponPageSize,
+        timeline: 0,
+      });
       setModalVisible(false);
     });
   };
   const handleSubmitModify = () => {
-    form.validateFields().then((value) => {
-      // await putModifyCoupon(value)
+    form.validateFields().then(async (value) => {
+      let { beginTime, endTime } = value;
+      beginTime = beginTime.format(dateFormat);
+      endTime = endTime.format(dateFormat);
+      await putCouponActivityById({
+        shopId: depart_id,
+        ...value,
+        beginTime,
+        endTime,
+      });
+      await getAllValidCouponActivity({
+        shopId: depart_id,
+        page: validCouponPage,
+        pageSize: validCouponPageSize,
+        timeline: 0,
+      });
       setModalVisible(false);
     });
   };
@@ -124,12 +161,11 @@ const coupon_valid = ({
   }, []);
   useEffect(() => {
     getAllValidCouponActivity({
-      id: depart_id,
+      shopId: depart_id,
       page: validCouponPage,
       pageSize: validCouponPageSize,
       timeline: 0,
     });
-    console.log('fetch new');
   }, [validCouponPage, validCouponPageSize]);
   return (
     <Card>
@@ -161,7 +197,7 @@ const coupon_valid = ({
             label="活动名"
             name="name"
             required
-            rules={[{ required: true, message: '请输入名称' }]}
+            rules={[{ required: true, message: '此项不能为空' }]}
           >
             <Input />
           </Form.Item>
@@ -169,43 +205,43 @@ const coupon_valid = ({
             label="数量"
             name="quantity"
             required
-            rules={[{ required: true, message: '请输入价格' }]}
+            rules={[{ required: true, message: '此项不能为空' }]}
           >
             <Input type="number" />
           </Form.Item>
           {Number(modalState) === 0 ? (
             <>
               <Form.Item
-                label="quantityType"
+                label="数量类型"
                 name="quantityType"
                 required
-                rules={[{ required: true, message: '请输入价格' }]}
+                rules={[{ required: true, message: '此项不能为空' }]}
               >
                 <Input type="number" />
               </Form.Item>
               <Form.Item
-                label="有效？？？"
+                label="有效"
                 name="validTerm"
                 required
-                rules={[{ required: true, message: '请输入价格' }]}
+                rules={[{ required: true, message: '此项不能为空' }]}
               >
-                <DatePicker showTime />
+                <Input type="number" />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label="优惠时间"
                 name="couponTime"
                 required
-                rules={[{ required: true, message: '请输入价格' }]}
+                rules={[{ required: true, message: '此项不能为空' }]}
               >
                 <DatePicker showTime />
-              </Form.Item>
+              </Form.Item> */}
             </>
           ) : null}
           <Form.Item
             label="开始时间"
             name="beginTime"
             required
-            rules={[{ required: true, message: '请输入价格' }]}
+            rules={[{ required: true, message: '此项不能为空' }]}
           >
             <DatePicker showTime />
           </Form.Item>
@@ -213,7 +249,7 @@ const coupon_valid = ({
             label="结束时间"
             name="endTime"
             required
-            rules={[{ required: true, message: '请输入价格' }]}
+            rules={[{ required: true, message: '此项不能为空' }]}
           >
             <DatePicker showTime />
           </Form.Item>
@@ -221,7 +257,7 @@ const coupon_valid = ({
             label="策略"
             name="strategy"
             required
-            rules={[{ required: true, message: '请输入价格' }]}
+            rules={[{ required: true, message: '此项不能为空' }]}
           >
             <Input />
           </Form.Item>

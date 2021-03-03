@@ -8,6 +8,7 @@ import {
   Space,
   Form,
   DatePicker,
+  Descriptions,
   Modal,
   Input,
   PageHeader,
@@ -33,9 +34,19 @@ const coupon_detail = ({
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
+  const {
+    name,
+    state,
+    quantity,
+    quantityType,
+    validTerm,
+    imageUrl,
+    strategy,
+    couponTime,
+  } = couponDetail;
   useEffect(() => {
     getCouponActivitySkusById({
-      shopId: depart_id,
+      // shopId: depart_id,
       id,
     });
     getCouponActivityById({
@@ -49,19 +60,19 @@ const coupon_detail = ({
   const handledeleteSkusFromCoupon = async ({ id }) => {
     await deleteCouponSkusRegion({
       shopId: depart_id,
-      id,
+      id: id,
     });
   };
-  const handleOnShelves = async ({ id }) => {
+  const handleOnShelves = async ({}) => {
     await putOnshelvesActivity({
       shopId: depart_id,
-      id,
+      id: id,
     });
   };
-  const handleOffShelves = async ({ id }) => {
+  const handleOffShelves = async ({}) => {
     await putOffshelvesActivity({
       shopId: depart_id,
-      id,
+      id: id,
     });
   };
   const columns = useMemo(() => {
@@ -138,8 +149,22 @@ const coupon_detail = ({
       }
     >
       <Card title="具体信息" size="small">
-        {JSON.stringify(couponDetail)}
-        <div>
+        <Space>
+          <Descriptions>
+            <Descriptions.Item label="活动名">{name}</Descriptions.Item>
+            <Descriptions.Item label="活动状态">{state}</Descriptions.Item>
+            <Descriptions.Item label="数量">{quantity}</Descriptions.Item>
+            <Descriptions.Item label="数量类型">
+              {quantityType}
+            </Descriptions.Item>
+            <Descriptions.Item label="validTerm">{validTerm}</Descriptions.Item>
+            <Descriptions.Item label="图片">
+              <img src={imageUrl}></img>
+            </Descriptions.Item>
+            <Descriptions.Item label="策略">{strategy}</Descriptions.Item>
+          </Descriptions>
+        </Space>
+        <Space>
           <span>活动状态</span>
           <Button type="primary" onClick={handleOnShelves}>
             上架活动
@@ -147,7 +172,7 @@ const coupon_detail = ({
           <Button type="primary" onClick={handleOffShelves}>
             下架活动
           </Button>
-        </div>
+        </Space>
       </Card>
       <Card title="活动商品" size="small">
         <div style={{ margin: 10 }}>
