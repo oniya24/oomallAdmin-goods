@@ -41,6 +41,11 @@ const goods_category = ({
       shopId: depart_id,
       id,
     });
+    await getAllCategory({
+      cId: mainCate,
+      page: categoryPage,
+      pageSize: categoryPageSize,
+    });
   };
   const handleCreateCategory = () => {
     setModalState(0);

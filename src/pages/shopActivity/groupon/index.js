@@ -26,6 +26,8 @@ const shopActivity_groupon = ({
   grouponPage,
   grouponPageSize,
   getAllGroupons,
+  getAllSpu,
+  spuList,
   postCreateGroupon,
   putModifyGroupon,
   deleteGroupon,
@@ -33,6 +35,7 @@ const shopActivity_groupon = ({
   putOffshelvesGroupon,
   saveAdverPagination,
 }) => {
+  console.log(spuList);
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
@@ -45,11 +48,25 @@ const shopActivity_groupon = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [queryForm] = Form.useForm();
+  const fetchNewGrouponList = async () => {
+    let { beginTime, endTime, ...params } = queryParams;
+    beginTime = beginTime.format(dateFormat);
+    endTime = endTime.format(dateFormat);
+    await getAllGroupons({
+      shopId: depart_id,
+      ...params,
+      beginTime,
+      endTime,
+      page: grouponPage,
+      pageSize: grouponPageSize,
+    });
+  };
   const handledeleteGroupon = async ({ id }) => {
     await deleteGroupon({
       shopId: depart_id,
       id,
     });
+    await fetchNewGrouponList();
   };
   const handleCreateGroupon = () => {
     setModalState(0);
@@ -73,12 +90,14 @@ const shopActivity_groupon = ({
       shopId: depart_id,
       id,
     });
+    await fetchNewGrouponList();
   };
   const handleOffShelves = async ({ id }) => {
     await putOffshelvesGroupon({
       shopId: depart_id,
       id,
     });
+    await fetchNewGrouponList();
   };
   const handleSubmitCreate = () => {
     form.validateFields().then(async (value) => {
@@ -93,6 +112,7 @@ const shopActivity_groupon = ({
         beginTime,
         endTime,
       });
+      await fetchNewGrouponList();
       setModalVisible(false);
     });
   };
@@ -108,15 +128,15 @@ const shopActivity_groupon = ({
         beginTime,
         endTime,
       });
+      await fetchNewGrouponList();
       setModalVisible(false);
     });
   };
-  const handleQueryFormSubmit = (value) => {
-    console.log(value);
+  const handleQueryFormSubmit = async (value) => {
     let { beginTime, endTime, ...params } = value;
     beginTime = beginTime.format(dateFormat);
     endTime = endTime.format(dateFormat);
-    getAllGroupons({
+    await getAllGroupons({
       shopId: depart_id,
       ...params,
       beginTime,
@@ -133,7 +153,7 @@ const shopActivity_groupon = ({
         key: 'id',
       },
       {
-        title: '姓名',
+        title: '活动名称',
         dataIndex: 'name',
         key: 'name',
       },
@@ -191,6 +211,11 @@ const shopActivity_groupon = ({
       page: grouponPage,
       pageSize: grouponPageSize,
     });
+    getAllSpu({
+      shopId: depart_id,
+      page: 1,
+      pageSize: 1000,
+    });
   }, [grouponPage, grouponPageSize]);
   return (
     <div style={{ height: '100%', width: '100%' }}>
@@ -200,9 +225,9 @@ const shopActivity_groupon = ({
             <Col span={5}>
               <Form.Item label="物品" name="spuId">
                 <Select>
-                  <Option value={273}>test1</Option>
-                  <Option value={274}>test2</Option>
-                  <Option value={275}>test3</Option>
+                  {spuList.map((item) => {
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })}
                 </Select>
               </Form.Item>
             </Col>
@@ -275,7 +300,7 @@ const shopActivity_groupon = ({
         }
         onCancel={() => setModalVisible(false)}
       >
-        <Form form={form} preserve={false} style={{ width: 250 }}>
+        <Form form={form} preserve={false} style={{ width: 350 }}>
           <Form.Item label="id" name="id" hidden></Form.Item>
           <Form.Item
             label="策略"
@@ -285,13 +310,20 @@ const shopActivity_groupon = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item label="物品" name="spuId">
-            <Select>
-              <Option value={273}>test1</Option>
-              <Option value={274}>test2</Option>
-              <Option value={275}>test3</Option>
-            </Select>
-          </Form.Item>
+          {Number(modalState) === 0 ? (
+            <Form.Item
+              label="物品"
+              name="spuId"
+              required
+              rules={[{ required: true, message: '请选择商品' }]}
+            >
+              <Select>
+                {spuList.map((item) => {
+                  return <Option value={item.id}>{item.name}</Option>;
+                })}
+              </Select>
+            </Form.Item>
+          ) : null}
           <Form.Item
             label="开始时间"
             name="beginTime"

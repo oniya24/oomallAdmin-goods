@@ -35,6 +35,11 @@ const goods_spu = ({
       shopId: depart_id,
       id,
     });
+    await getAllSpu({
+      shopId: depart_id,
+      page: spuPage,
+      pageSize: spuPageSize,
+    });
   };
   const handleCreateSpu = () => {
     setModalState(0);

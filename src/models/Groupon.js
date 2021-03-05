@@ -6,6 +6,8 @@ import {
   putOnshelvesGrouponReq,
   putOffshelvesGrouponReq,
 } from '@/service/Groupon.tsx';
+
+import { getAllSpuReq } from '@/service/Goods.tsx';
 import {
   defaultMapStateToProps,
   defaultMapDispatchToProps,
@@ -16,6 +18,7 @@ const namespace = 'groupon';
 const model = {
   namespace,
   state: {
+    spuList: [],
     grouponList: [
       {
         id: 0,
@@ -42,6 +45,17 @@ const model = {
           },
         });
       }
+    },
+    *getAllSpu({ payload }, { call, put }) {
+      const res = yield call(getAllSpuReq, payload);
+      const { data } = res;
+      const { list } = data;
+      yield put({
+        type: 'save',
+        payload: {
+          spuList: list,
+        },
+      });
     },
     *postCreateGroupon({ payload }, { call, put }) {
       const res = yield call(postCreateGrouponReq, payload);

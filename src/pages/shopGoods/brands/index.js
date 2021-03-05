@@ -133,6 +133,9 @@ const goods_brand = ({
         title: '图片',
         dataIndex: 'imageUrl',
         key: 'imageUrl',
+        render: (text, record) => {
+          return <img src={text} style={{ width: 50, height: 50 }}></img>;
+        },
       },
       {
         title: '细节',

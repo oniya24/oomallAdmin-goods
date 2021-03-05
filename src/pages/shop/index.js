@@ -40,6 +40,10 @@ const shop = ({
       shopId: depart_id,
       id,
     });
+    await getAllShop({
+      page: shopPage,
+      pageSize: shopPageSize,
+    });
   };
   const handleCreateShop = () => {
     setModalState(0);
@@ -167,15 +171,6 @@ const shop = ({
           >
             <Input />
           </Form.Item>
-          {/* <Form.Item label="细节" name="detail" required
-            rules={
-              [
-                { required: true, message: '请输入细节'}
-              ]
-            }
-          >
-            <Input/>
-          </Form.Item> */}
         </Form>
       </Modal>
     </Card>

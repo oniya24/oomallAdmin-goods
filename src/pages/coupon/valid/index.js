@@ -171,7 +171,7 @@ const coupon_valid = ({
     <Card>
       <div style={{ margin: 10 }}>
         <Button type="primary" onClick={handleCreateCoupon}>
-          创建预售活动
+          创建优惠活动
         </Button>
       </div>
       <Table

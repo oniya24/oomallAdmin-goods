@@ -54,6 +54,7 @@ const userManage_comment = ({
       id: depart_id,
       page: commentPage,
       pageSize: commentPageSize,
+      state: 0,
     });
   }, [commentPage, commentPageSize]);
   const columns = useMemo(() => {
@@ -132,7 +133,9 @@ const userManage_comment = ({
                     审核不通过
                   </Button>
                 </>
-              ) : null}
+              ) : (
+                '无操作'
+              )}
             </Space>
           );
         },
@@ -143,7 +146,11 @@ const userManage_comment = ({
     <Card>
       <Form style={{ marginBottom: 10 }} layout="inline">
         <Form.Item label="评论状态">
-          <Select style={{ width: 200 }} onChange={handleSelectChange}>
+          <Select
+            style={{ width: 200 }}
+            onChange={handleSelectChange}
+            defaultValue={commentState}
+          >
             {commentFilters.map((item) => {
               return <Option value={item.value}>{item.text}</Option>;
             })}
