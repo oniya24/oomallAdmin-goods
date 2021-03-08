@@ -189,7 +189,7 @@ const goods_sku = ({
             <Space>
               {Number(state) === 0 ? (
                 <Button
-                  type="primary"
+                  type="danger"
                   onClick={() => handlePutOffshelves(record)}
                 >
                   下架sku

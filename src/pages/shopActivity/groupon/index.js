@@ -180,7 +180,7 @@ const shopActivity_groupon = ({
                   上架活动
                 </Button>
               ) : (
-                <Button type="primary" onClick={() => handleOffShelves(record)}>
+                <Button type="danger" onClick={() => handleOffShelves(record)}>
                   下架活动
                 </Button>
               )}

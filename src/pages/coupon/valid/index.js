@@ -112,6 +112,9 @@ const coupon_valid = ({
         title: '活动图片',
         dataIndex: 'imageUrl',
         key: 'imageUrl',
+        render: (text, record) => {
+          return <img src={text} style={{ width: 50, height: 50 }}></img>;
+        },
       },
       {
         title: '开始时间',

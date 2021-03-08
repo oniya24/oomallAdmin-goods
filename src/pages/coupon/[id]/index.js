@@ -7,6 +7,7 @@ import {
   Tooltip,
   Space,
   Form,
+  Select,
   DatePicker,
   Descriptions,
   Modal,
@@ -15,6 +16,8 @@ import {
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Coupon';
 import pagination from '@/utils/pagination';
+
+const { Option } = Select;
 
 const coupon_detail = ({
   couponDetail,
@@ -29,11 +32,14 @@ const coupon_detail = ({
   putOnshelvesActivity,
   putOffshelvesActivity,
   saveCouponSkusPagination,
+  getAllSpu,
+  spuList,
 }) => {
   const { id } = useParams();
   const { depart_id, userName, mobile } = JSON.parse(
     sessionStorage.getItem('adminInfo'),
   );
+  const [addSpuState, setAddSpuState] = useState(false);
   const {
     name,
     state,
@@ -48,19 +54,46 @@ const coupon_detail = ({
     getCouponActivitySkusById({
       // shopId: depart_id,
       id,
+      page: 1,
+      pageSize: 100,
     });
     getCouponActivityById({
       shopId: depart_id,
       id,
     });
+    getAllSpu({
+      shopId: depart_id,
+      page: 1,
+      pageSize: 1000,
+    });
   }, []);
-  const handleAddSku2Coupon = () => {
-    // postModifyActivityRegion
+  const handleAddSku2Coupon = (value) => {
+    setAddSpuState(true);
+  };
+  const handleAddSkuSubmit = async (val) => {
+    await postModifyActivityRegion({
+      shopId: depart_id,
+      id: id,
+      ...val,
+    });
+    await getCouponActivitySkusById({
+      // shopId: depart_id,
+      id,
+      page: 1,
+      pageSize: 100,
+    });
+    setAddSpuState(false);
   };
   const handledeleteSkusFromCoupon = async ({ id }) => {
     await deleteCouponSkusRegion({
       shopId: depart_id,
       id: id,
+    });
+    await getCouponActivitySkusById({
+      // shopId: depart_id,
+      id,
+      page: 1,
+      pageSize: 100,
     });
   };
   const handleOnShelves = async ({}) => {
@@ -68,11 +101,19 @@ const coupon_detail = ({
       shopId: depart_id,
       id: id,
     });
+    await getCouponActivityById({
+      shopId: depart_id,
+      id,
+    });
   };
   const handleOffShelves = async ({}) => {
     await putOffshelvesActivity({
       shopId: depart_id,
       id: id,
+    });
+    await getCouponActivityById({
+      shopId: depart_id,
+      id,
     });
   };
   const columns = useMemo(() => {
@@ -91,6 +132,9 @@ const coupon_detail = ({
         title: '活动图片',
         dataIndex: 'imageUrl',
         key: 'imageUrl',
+        render: (text, record) => {
+          return <img src={text} style={{ width: 50, height: 50 }}></img>;
+        },
       },
       {
         title: 'sku编号',
@@ -159,7 +203,7 @@ const coupon_detail = ({
             </Descriptions.Item>
             <Descriptions.Item label="validTerm">{validTerm}</Descriptions.Item>
             <Descriptions.Item label="图片">
-              <img src={imageUrl}></img>
+              <img src={imageUrl} style={{ width: 50, height: 50 }}></img>
             </Descriptions.Item>
             <Descriptions.Item label="策略">{strategy}</Descriptions.Item>
           </Descriptions>
@@ -169,7 +213,7 @@ const coupon_detail = ({
           <Button type="primary" onClick={handleOnShelves}>
             上架活动
           </Button>
-          <Button type="primary" onClick={handleOffShelves}>
+          <Button type="danger" onClick={handleOffShelves}>
             下架活动
           </Button>
         </Space>
@@ -188,6 +232,29 @@ const coupon_detail = ({
           dataSource={couponSkusList}
         ></Table>
       </Card>
+      <Modal
+        destroyOnClose
+        visible={addSpuState}
+        onCancel={() => setAddSpuState(false)}
+        footer={[]}
+      >
+        <Form preserve={false} onFinish={handleAddSkuSubmit}>
+          <Form.Item label="选择商品列表" required name="spuId">
+            <Select maxTagCount={3} allowClear>
+              {spuList.map((item) => {
+                return <Option value={String(item.id)}>{item.name}</Option>;
+              })}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button type="primary" htmlType="submit">
+                确定
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
     </Card>
   );
 };

@@ -11,6 +11,7 @@ import {
   deleteCouponSkusRegionReq,
   putOnshelvesActivityReq,
   putOffshelvesActivityReq,
+  getAllSpuReq,
 } from '@/service/Coupon.tsx';
 import {
   defaultMapStateToProps,
@@ -22,6 +23,7 @@ const namespace = 'coupon';
 const model = {
   namespace,
   state: {
+    spuList: [],
     validCouponList: [
       {
         id: 0,
@@ -69,6 +71,19 @@ const model = {
           payload: {
             inValidCouponList: list,
             inValidCouponTotal: total,
+          },
+        });
+      }
+    },
+    *getAllSpu({ payload }, { call, put }) {
+      const res = yield call(getAllSpuReq, payload);
+      if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
+        const { data } = res;
+        const { list } = data;
+        yield put({
+          type: 'save',
+          payload: {
+            spuList: list,
           },
         });
       }

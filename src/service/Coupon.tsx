@@ -123,7 +123,13 @@ export const postModifyActivityRegionReq = ({
 }) => {
   return request(`/shops/${shopId}/couponactivities/${id}/skus`, {
     method: 'post',
-    data: data,
+    params: data,
+  });
+};
+
+export const getAllSpuReq = (params: any) => {
+  return request(`/shops/spus`, {
+    params: params,
   });
 };
 
