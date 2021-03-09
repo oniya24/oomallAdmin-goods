@@ -89,11 +89,8 @@ const model = {
       }
     },
     *getAllValidCouponActivity({ payload }, { call, put }) {
-      console.log('payload', payload);
       const res = yield call(getAllValidCouponActivityReq, payload);
-      console.log('res', res);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
-        console.log('?????');
         const { data } = res;
         const { list, total } = data;
         yield put({
@@ -120,7 +117,6 @@ const model = {
     *getCouponActivityById({ payload }, { call, put }) {
       const res = yield call(getCouponActivityByIdReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
-        message.success('查看优惠活动详情');
         const { data } = res;
         yield put({
           type: 'save',
@@ -145,7 +141,6 @@ const model = {
     *getCouponActivitySkusById({ payload }, { call, put }) {
       const res = yield call(getCouponActivitySkusByIdReq, payload);
       if (isErrnoEqual0(res) || isCodeEqualOk(res)) {
-        message.success('查看优惠活动中的商品');
         const { data } = res;
         const { list, total } = data;
         yield put({

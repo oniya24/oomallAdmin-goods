@@ -137,29 +137,19 @@ const coupon_detail = ({
         },
       },
       {
-        title: 'sku编号',
-        dataIndex: 'skuSn',
-        key: 'skuSn',
+        title: '商品编号',
+        dataIndex: 'goodsSn',
+        key: 'goodsSn',
       },
       {
-        title: 'inventory',
-        dataIndex: 'inventory',
-        key: 'inventory',
+        title: '分类',
+        dataIndex: ['category', 'name'],
+        key: 'categoryName',
       },
       {
-        title: '原价',
-        dataIndex: 'originalPrice',
-        key: 'originalPrice',
-      },
-      {
-        title: 'disable',
-        dataIndex: 'disable',
-        key: 'disable',
-      },
-      {
-        title: '现价',
-        dataIndex: 'price',
-        key: 'price',
+        title: '品牌',
+        dataIndex: ['brand', 'name'],
+        key: 'brandName',
       },
       {
         title: '操作',
