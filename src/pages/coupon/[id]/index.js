@@ -13,9 +13,11 @@ import {
   Modal,
   Input,
   PageHeader,
+  Upload,
 } from 'antd';
 import { mapStateToProps, mapDispatchToProps } from '@/models/Coupon';
 import pagination from '@/utils/pagination';
+import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -32,6 +34,7 @@ const coupon_detail = ({
   putOnshelvesActivity,
   putOffshelvesActivity,
   saveCouponSkusPagination,
+  postUploadCouponActivityImg,
   getAllSpu,
   spuList,
 }) => {
@@ -40,6 +43,7 @@ const coupon_detail = ({
     sessionStorage.getItem('adminInfo'),
   );
   const [addSpuState, setAddSpuState] = useState(false);
+  const [activityImageUrl, setActivityImageUrl] = useState(null);
   const {
     name,
     state,
@@ -114,6 +118,28 @@ const coupon_detail = ({
     await getCouponActivityById({
       shopId: depart_id,
       id,
+    });
+  };
+  const beforeUpload = (file) => {
+    console.log(file);
+    // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    // if (!isJpgOrPng) {
+    //   message.error('You can only upload JPG/PNG file!');
+    // }
+    // const isLt2M = file.size / 1024 / 1024 < 5;
+    // if (!isLt2M) {
+    //   message.error('Image must smaller than 5MB!');
+    // }
+    setActivityImageUrl(file);
+    return false;
+  };
+  const handleUploadImg = async () => {
+    const formData = new FormData();
+    formData.append('img', activityImageUrl);
+    await postUploadCouponActivityImg({
+      shopId: depart_id,
+      id,
+      formData,
     });
   };
   const columns = useMemo(() => {
@@ -192,10 +218,28 @@ const coupon_detail = ({
               {quantityType}
             </Descriptions.Item>
             <Descriptions.Item label="validTerm">{validTerm}</Descriptions.Item>
-            <Descriptions.Item label="图片">
-              <img src={imageUrl} style={{ width: 50, height: 50 }}></img>
-            </Descriptions.Item>
             <Descriptions.Item label="策略">{strategy}</Descriptions.Item>
+            <Descriptions.Item label="图片">
+              <Upload
+                name="file"
+                id="file"
+                beforeUpload={beforeUpload}
+                multiple={false}
+              >
+                {imageUrl ? (
+                  <img src={imageUrl} style={{ width: 50, height: 50 }}></img>
+                ) : (
+                  <Button icon={<UploadOutlined />}>选择图片</Button>
+                )}
+              </Upload>
+              <Button
+                style={{ marginLeft: 10 }}
+                type="primary"
+                onClick={handleUploadImg}
+              >
+                上传文件
+              </Button>
+            </Descriptions.Item>
           </Descriptions>
         </Space>
         <Space>

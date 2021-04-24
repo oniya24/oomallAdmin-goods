@@ -49,12 +49,15 @@ export const postCreateCouponActivityReq = ({
 export const postUploadCouponActivityImgReq = ({
   shopId,
   id,
+  formData,
 }: {
   shopId: number;
   id: number;
+  formData: any;
 }) => {
   return request(`/shops/${shopId}/couponactivities/${id}/uploadImg`, {
     method: 'post',
+    data: formData,
   });
 };
 
