@@ -167,7 +167,7 @@ export const putOffshelvesActivityReq = ({
   shopId: number;
   id: number;
 }) => {
-  return request(`/shops/${shopId}/couponactivities/${id}/onshelves`, {
+  return request(`/shops/${shopId}/couponactivities/${id}/offshelves`, {
     method: 'put',
   });
 };
