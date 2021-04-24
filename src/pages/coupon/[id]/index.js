@@ -135,11 +135,15 @@ const coupon_detail = ({
   };
   const handleUploadImg = async () => {
     const formData = new FormData();
-    formData.append('img', activityImageUrl);
+    formData.append('file', activityImageUrl);
     await postUploadCouponActivityImg({
       shopId: depart_id,
       id,
       formData,
+    });
+    await getCouponActivityById({
+      shopId: depart_id,
+      id,
     });
   };
   const columns = useMemo(() => {
@@ -221,13 +225,22 @@ const coupon_detail = ({
             <Descriptions.Item label="策略">{strategy}</Descriptions.Item>
             <Descriptions.Item label="图片">
               <Upload
+                style={{ width: 100 }}
                 name="file"
                 id="file"
                 beforeUpload={beforeUpload}
                 multiple={false}
               >
                 {imageUrl ? (
-                  <img src={imageUrl} style={{ width: 50, height: 50 }}></img>
+                  <div
+                    style={{
+                      padding: 5,
+                      border: '1px solid #cdcdcd',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <img src={imageUrl} style={{ width: 50, height: 50 }}></img>
+                  </div>
                 ) : (
                   <Button icon={<UploadOutlined />}>选择图片</Button>
                 )}
